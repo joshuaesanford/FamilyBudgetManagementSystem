@@ -72,3 +72,64 @@
 ### - Detailed user manual
 ### - Technical documentation
 ### - Test reports
+
+## 6. Project Directory Structure:
+
+The following is the proposed project directory structure:
+
+```
+FamilyBudgetManagementSystem
+│   README.md
+│   .gitignore
+│   pom.xml   
+│
+└───src
+│   │
+│   └───main
+│   │   └───java
+│   │       └───com
+│   │           └───familybudget
+│   │               │   Main.java
+│   │               │
+│   │               └───models
+│   │                   │   User.java
+│   │                   │   Budget.java
+│   │                   │   Expense.java
+│   │                   │   Income.java
+│   │                   │   Savings.java
+│   │                   │   Investment.java
+│   │       
+│   └───test
+│       └───java
+│           └───com
+│               └───familybudget
+│                   │   MainTest.java
+│                   │
+│                   └───models
+│                       │   UserTest.java
+│                       │   BudgetTest.java
+│                       │   ExpenseTest.java
+│                       │   IncomeTest.java
+│                       │   SavingsTest.java
+│                       │   InvestmentTest.java
+│                       
+└───resources
+│   │   application.properties
+│   │   log4j.properties
+│   
+└───scripts
+│   │   db_init.bat
+│   │   db_maintenance.bat
+│   │   backup.bat
+│   
+└───docs
+    │   UserManual.md
+    │   TechnicalDocumentation.md
+    │   TestReports.md
+```
+
+- `src/main/java`: This is where all the main application code will reside.
+- `src/test/java`: This is for all the unit test code.
+- `resources`: This directory will contain all the properties files and other resources needed by the application.
+- `scripts`: This directory will contain all the batch scripts used for database operations and other routine tasks.
+- `docs`: This directory will contain the user manual, technical documentation, and test reports.
