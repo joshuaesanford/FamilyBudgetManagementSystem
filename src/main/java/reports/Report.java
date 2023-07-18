@@ -12,14 +12,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Report extends Main
-{ private static final String URL = "jdbc:mysql://localhost:3306/transactions_database";
-  private static final String USER = "root";
-  private static final String PASSWORD = "root";
+{ private static final String URL =
+    "jdbc:mysql://localhost:3306/transactions_database";
+  private static final String USER = System.getenv("DB_USERNAME");
+  private static final String PASSWORD = System.getenv("DB_PASSWORD");
   private JComboBox<String> combo_box;
   private JButton gen_rep_button;
-  
-  private String[] options = {"" , "Transactions Report", "Debt Report", "Income and Expenses Report", "Savings & Investments Report"};
-  
+  private String[] options =
+    {"" , "Transactions Report", "Debt Report", "Income and Expenses Report",
+      "Savings & Investments Report"};
+
+  // CONSTRUCTOR
   public Report()
   { combo_box = new JComboBox<>(options);
     label_spacer = build_label("", Label.SPACER, null);
@@ -31,7 +34,6 @@ public class Report extends Main
     gbc.gridy = 4;
     gen_rep_button = new JButton("Generate Report");
     frame.add(gen_rep_button, gbc);
-    
     gen_rep_button.addActionListener(new ActionListener()
     { @Override
       public void actionPerformed(ActionEvent e)
@@ -39,63 +41,65 @@ public class Report extends Main
         // Handle every possible case for selection in the comboBox
         switch (selectedOption)
         { case "Transactions Report":
-            get_transactions_report();
-            JOptionPane.showMessageDialog(null, "Transactions Report generated in reports directory.");
+          { get_transactions_report();
+            JOptionPane.showMessageDialog
+              (null, "Transactions Report generated in reports directory.");
             break;
+          }
           case "Debt Report":
-            get_debt_report();
-            JOptionPane.showMessageDialog(null, "Debt Report generated in reports directory.");
+          { get_debt_report();
+            JOptionPane.showMessageDialog
+              (null, "Debt Report generated in reports directory.");
             break;
+          }
           case "Income and Expenses Report":
-            get_income_expense_report();
-            JOptionPane.showMessageDialog(null, "Income and Expenses Report generated in reports directory.");
+          { get_income_expense_report();
+            JOptionPane.showMessageDialog
+              (null, "Income and Expenses Report generated in reports directory.");
             break;
+          }
           case "Savings & Investments Report":
-            get_savings_investment_report();
-            JOptionPane.showMessageDialog(null, "Savings & Investments Report generated in reports directory.");
+          { get_savings_investment_report();
+            JOptionPane.showMessageDialog
+              (null, "Savings & Investments Report generated in reports directory.");
             break;
+          }
           default:
-            // Handle default case
-            break;
-        }
-      }
-    });
-  }
+          { break;
+          }
+        } // end of switch over comboBox selections.
+      } // end of actionPerformed event override.
+    }); // end of adding actionListener to gen_rep_button
+  } // end of constructor
   
   public void get_transactions_report()
   { Connection conn = null;
     try
     { conn = DriverManager.getConnection(URL, USER, PASSWORD);
       Statement stmt = conn.createStatement();
-      String sql = "SELECT Date, Description, Amount, Type, Account_Name FROM transactions_table " +
+      String sql = "SELECT Date, Description, Amount, Type, Account_Name " +
+        "FROM transactions_table " +
         "ORDER BY Account_Name, Date";
       ResultSet rs = stmt.executeQuery(sql);
-      
       // Convert ResultSet to JRResultSetDataSource
       JRResultSetDataSource jrRS = new JRResultSetDataSource(rs);
-      
       // Specify the location of the JasperReports template file
       String reportJrxml = "./src/main/java/reports/transactions_report.jrxml";
       // Compile the JasperReports template
       JasperReport jasperReport = JasperCompileManager.compileReport(reportJrxml);
-      
       // Create a map to hold any parameters required by the report
-      Map<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("ReportTitle", "Transactions Report");
-      parameters.put("ReportDate", new java.util.Date());
-      parameters.put("IncludeDetail", Boolean.TRUE);
-      //parameters.put("SUBREPORT_DIR", "./src/main/java/reports/subreports/");
-      
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("ReportTitle", "Transactions Report");
+      params.put("ReportDate", new java.util.Date());
+      params.put("IncludeDetail", Boolean.TRUE);
       // Fill the report with data
-      JasperPrint print = JasperFillManager.fillReport(jasperReport, parameters, jrRS);
-      
+      JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrRS);
       // Specify the output directory for the PDF report
       File outDir = new File("./src/main/java/reports/");
       outDir.mkdirs();
-      
       // Export the report to a PDF file
-      JasperExportManager.exportReportToPdfFile(print, "./src/main/java/reports/TransactionsReport.pdf");
-      
+      String dest_file_name = "./src/main/java/reports/TransactionsReport.pdf";
+      JasperExportManager.exportReportToPdfFile(print, dest_file_name);
       System.out.println("Transactions report written to reports directory.");
     }
     catch (Exception e)
@@ -116,10 +120,11 @@ public class Report extends Main
   
   public void get_debt_report()
   { Connection conn = null;
+    String sql = "";
     try
     { conn = DriverManager.getConnection(URL, USER, PASSWORD);
       Statement stmt = conn.createStatement();
-      String sql = "SELECT t.Date, t.Description, t.Amount, t.Type, t.Account_Name " +
+      sql = "SELECT t.Date, t.Description, t.Amount, t.Type, t.Account_Name " +
         "FROM transactions_table t " +
         "JOIN view_accounts_table v " +
         "ON t.Account_Name = v.Account_Name " +
@@ -136,22 +141,18 @@ public class Report extends Main
       JasperReport jasperReport = JasperCompileManager.compileReport(reportJrxml);
       
       // Create a map to hold any parameters required by the report
-      Map<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("ReportTitle", "Debt Report");
-      parameters.put("ReportDate", new java.util.Date());
-      parameters.put("IncludeDetail", Boolean.TRUE);
-      //parameters.put("SUBREPORT_DIR", "./src/main/java/reports/subreports/");
-      
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("ReportTitle", "Debt Report");
+      params.put("ReportDate", new java.util.Date());
+      params.put("IncludeDetail", Boolean.TRUE);
       // Fill the report with data
-      JasperPrint print = JasperFillManager.fillReport(jasperReport, parameters, jrRS);
-      
+      JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrRS);
       // Specify the output directory for the PDF report
       File outDir = new File("./src/main/java/reports/");
       outDir.mkdirs();
-      
       // Export the report to a PDF file
-      JasperExportManager.exportReportToPdfFile(print, "./src/main/java/reports/DebtReport.pdf");
-      
+      String dest_file_name = "./src/main/java/reports/DebtReport.pdf";
+      JasperExportManager.exportReportToPdfFile(print, dest_file_name);
       System.out.println("Debt report written to reports directory.");
     }
     catch (Exception e)
@@ -161,54 +162,50 @@ public class Report extends Main
     { // Close the database connection
       if (conn != null)
       { try
-      { conn.close();
-      }
-      catch (SQLException ignore)
-      {
-      }
+        { conn.close();
+        }
+        catch (SQLException ignore)
+        {
+        }
       }
     }
   }
   
   public void get_savings_investment_report()
   { Connection conn = null;
+    String sql = "";
     try
     { conn = DriverManager.getConnection(URL, USER, PASSWORD);
       Statement stmt = conn.createStatement();
-      String sql = "SELECT t.Date, t.Description, t.Amount, t.Type, t.Account_Name " +
+      sql = "SELECT t.Date, t.Description, t.Amount, t.Type, t.Account_Name " +
         "FROM transactions_table t " +
         "JOIN view_accounts_table v " +
         "ON t.Account_Name = v.Account_Name " +
         "WHERE v.Type IN ('Savings', 'Investment') " +
         "ORDER BY t.Account_Name, t.Date";
       ResultSet rs = stmt.executeQuery(sql);
-      
       // Convert ResultSet to JRResultSetDataSource
       JRResultSetDataSource jrRS = new JRResultSetDataSource(rs);
-      
       // Specify the location of the JasperReports template file
-      String reportJrxml = "./src/main/java/reports/savings_investments_report.jrxml";
+      String reportJrxml =
+        "./src/main/java/reports/savings_investments_report.jrxml";
       // Compile the JasperReports template
       JasperReport jasperReport = JasperCompileManager.compileReport(reportJrxml);
-      
       // Create a map to hold any parameters required by the report
-      Map<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("ReportTitle", "Debt Report");
-      parameters.put("ReportDate", new java.util.Date());
-      parameters.put("IncludeDetail", Boolean.TRUE);
-      //parameters.put("SUBREPORT_DIR", "./src/main/java/reports/subreports/");
-      
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("ReportTitle", "Debt Report");
+      params.put("ReportDate", new java.util.Date());
+      params.put("IncludeDetail", Boolean.TRUE);
       // Fill the report with data
-      JasperPrint print = JasperFillManager.fillReport(jasperReport, parameters, jrRS);
-      
+      JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrRS);
       // Specify the output directory for the PDF report
       File outDir = new File("./src/main/java/reports/");
       outDir.mkdirs();
-      
       // Export the report to a PDF file
-      JasperExportManager.exportReportToPdfFile(print, "./src/main/java/reports/SavingsInvestmentsReport.pdf");
-      
-      System.out.println("Savings and investments report written to reports directory.");
+      String dest_file_name = "./src/main/java/reports/SavingsInvestmentsReport.pdf";
+      JasperExportManager.exportReportToPdfFile(print, dest_file_name);
+      System.out.println
+        ("Savings and investments report written to reports directory.");
     }
     catch (Exception e)
     { e.printStackTrace();
@@ -217,53 +214,47 @@ public class Report extends Main
     { // Close the database connection
       if (conn != null)
       { try
-      { conn.close();
-      }
-      catch (SQLException ignore)
-      {
-      }
+        { conn.close();
+        }
+        catch (SQLException ignore)
+        {
+        }
       }
     }
   }
   
   public void get_income_expense_report()
   { Connection conn = null;
+    String sql = "";
     try
     { conn = DriverManager.getConnection(URL, USER, PASSWORD);
       Statement stmt = conn.createStatement();
-      String sql = "SELECT t.Date, t.Description, t.Amount, t.Type, t.Account_Name " +
+      sql = "SELECT t.Date, t.Description, t.Amount, t.Type, t.Account_Name " +
         "FROM transactions_table t " +
         "JOIN view_accounts_table v " +
         "ON t.Account_Name = v.Account_Name " +
         "WHERE v.Type IN ('Checking', 'Credit') " +
         "ORDER BY t.Account_Name, t.Date";
       ResultSet rs = stmt.executeQuery(sql);
-      
       // Convert ResultSet to JRResultSetDataSource
       JRResultSetDataSource jrRS = new JRResultSetDataSource(rs);
-      
       // Specify the location of the JasperReports template file
       String reportJrxml = "./src/main/java/reports/income_expenses_report.jrxml";
       // Compile the JasperReports template
       JasperReport jasperReport = JasperCompileManager.compileReport(reportJrxml);
-      
       // Create a map to hold any parameters required by the report
-      Map<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("ReportTitle", "Debt Report");
-      parameters.put("ReportDate", new java.util.Date());
-      parameters.put("IncludeDetail", Boolean.TRUE);
-      //parameters.put("SUBREPORT_DIR", "./src/main/java/reports/subreports/");
-      
+      Map<String, Object> params = new HashMap<String, Object>();
+      params.put("ReportTitle", "Debt Report");
+      params.put("ReportDate", new java.util.Date());
+      params.put("IncludeDetail", Boolean.TRUE);
       // Fill the report with data
-      JasperPrint print = JasperFillManager.fillReport(jasperReport, parameters, jrRS);
-      
+      JasperPrint print = JasperFillManager.fillReport(jasperReport, params, jrRS);
       // Specify the output directory for the PDF report
       File outDir = new File("./src/main/java/reports/");
       outDir.mkdirs();
-      
       // Export the report to a PDF file
-      JasperExportManager.exportReportToPdfFile(print, "./src/main/java/reports/IncomeExpenseReport.pdf");
-      
+      String file_dest_name = "./src/main/java/reports/IncomeExpenseReport.pdf";
+      JasperExportManager.exportReportToPdfFile(print, file_dest_name);
       System.out.println("Income and expenses report written to reports directory.");
     }
     catch (Exception e)
@@ -273,11 +264,11 @@ public class Report extends Main
     { // Close the database connection
       if (conn != null)
       { try
-      { conn.close();
-      }
-      catch (SQLException ignore)
-      {
-      }
+        { conn.close();
+        }
+        catch (SQLException ignore)
+        {
+        }
       }
     }
   }

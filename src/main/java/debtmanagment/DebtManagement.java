@@ -21,27 +21,26 @@ public class DebtManagement extends Main
   public static JTable table = new JTable(model);
   public static JScrollPane scroll_pane = new JScrollPane(table);
   public static GridBagConstraints gbc = new GridBagConstraints();
-  private static final String URL = "jdbc:mysql://localhost:3306/transactions_database";
-  private static final String USER = "root";
-  private static final String PASSWORD = "root";
+  private static final String URL =
+    "jdbc:mysql://localhost:3306/transactions_database";
+  private static final String USER = System.getenv("DB_USERNAME");
+  private static final String PASSWORD = System.getenv("DB_PASSWORD");
+
   public DebtManagement()
   { table.getTableHeader().setReorderingAllowed(false);
     table.setPreferredScrollableViewportSize(new Dimension(750, 350));
     table.setAutoCreateRowSorter(true);
-    
     TableCellEditor nonEditableCellEditor = new DefaultCellEditor(new JTextField())
     { @Override
-    public boolean isCellEditable(EventObject e)
-    { return false;
-    }
+      public boolean isCellEditable(EventObject e)
+      { return false;
+      }
     };
-    
     table.getColumnModel().getColumn(0).setCellEditor(nonEditableCellEditor);
     table.getColumnModel().getColumn(1).setCellEditor(nonEditableCellEditor);
     table.getColumnModel().getColumn(2).setCellEditor(nonEditableCellEditor);
     table.getColumnModel().getColumn(3).setCellEditor(nonEditableCellEditor);
     table.getColumnModel().getColumn(4).setCellEditor(nonEditableCellEditor);
-    
     gbc.gridx = 0;
     gbc.gridy = 2;
     frame.add(scroll_pane, gbc);
@@ -58,7 +57,8 @@ public class DebtManagement extends Main
   // where type is Car Loan, Credit, Mortgage, or Education Debt.
   public List<String> get_acc_names(Connection conn)
   { List<String> accountNames = new ArrayList<>();
-    String sql = "SELECT Account_Name FROM view_accounts_table WHERE Type IN ('Car Loan', 'Credit', 'Mortgage', 'Education Debt')";
+    String sql = "SELECT Account_Name FROM view_accounts_table " +
+      "WHERE Type IN ('Car Loan', 'Credit', 'Mortgage', 'Education Debt')";
     try (Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(sql))
     { while (rs.next())
@@ -74,7 +74,8 @@ public class DebtManagement extends Main
   // Uses the list of strings provided by get_acc_names to load all transactions
   // from the transactions_table that relate to debt management.
   public void load_transactions(Connection conn, List<String> account_names)
-  { String sql = "SELECT * FROM transactions_table WHERE Account_Name IN (";
+  { if (account_names.size() == 0) { return; }
+    String sql = "SELECT * FROM transactions_table WHERE Account_Name IN (";
     for (int i = 0; i < account_names.size(); i++)
     { sql += "'" + account_names.get(i) + "'";
       if (i < account_names.size() - 1)
@@ -87,15 +88,15 @@ public class DebtManagement extends Main
     { // Clear the model
       model.setRowCount(0);
       while (rs.next())
-    { // Here you can retrieve the values of the columns you need from the ResultSet
-      String date = rs.getString("Date");
-      String description = rs.getString("Description");
-      BigDecimal amount = rs.getBigDecimal("Amount");
-      String type = rs.getString("Type");
-      String acc_name = rs.getString("Account_Name");
-      int id = rs.getInt("ID");
-      model.addRow(new Object[]{date, description, amount, type, acc_name});
-    }
+      { // retrieve the values of the needed columns from the ResultSet
+        String date = rs.getString("Date");
+        String description = rs.getString("Description");
+        BigDecimal amount = rs.getBigDecimal("Amount");
+        String type = rs.getString("Type");
+        String acc_name = rs.getString("Account_Name");
+        int id = rs.getInt("ID");
+        model.addRow(new Object[]{date, description, amount, type, acc_name});
+      }
     }
     catch (SQLException e)
     { System.out.println(e.getMessage());

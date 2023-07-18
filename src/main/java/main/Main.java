@@ -1,11 +1,11 @@
 package main;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -23,7 +23,6 @@ public class Main
   static public JLabel label_generate_reports;
   static public GridBagConstraints gbc;
   static public TransactionsTable transactions_table;
-  
   static final public Font labelFont = new Font("Courier New", Font.BOLD, 30);
   static final public Font titleFont = new Font("Courier New", Font.ITALIC, 40);
   static final public Font backLinkFont = new Font("Courier New", Font.BOLD, 24);
@@ -32,7 +31,6 @@ public class Main
 	private static CheckingCreditAccounts checking_credit_accounts_table;
 	private static SavingsInvestmentAccounts savings_investment_accounts_table;
 	private static Report report;
-	
 	public static enum State
   { // Indentation represents path.
 	  	HOMEPAGE,
@@ -44,7 +42,6 @@ public class Main
 			  	GENERATE_REPORTS,
 			  	EXITING
   }
-  
   public static enum Label
   { TITLE,
   	LABEL,
@@ -52,7 +49,6 @@ public class Main
   	SPACER
   }
   public static State current_state;
-	
   private static JLabel label_debt_management;
 	private static JLabel label_checking_credit_accounts;
 	private static JLabel label_savings_investment_accounts;
@@ -60,108 +56,12 @@ public class Main
 	private static JLabel label_back_to_view_accounts;
 	private static JLabel label_back_to_homepage;
 	protected static JLabel label_spacer;
-	
-	public static MouseAdapter click_back_to_homepage()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.HOMEPAGE;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
-	
-	public static MouseAdapter click_back_to_view_accounts()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.VIEW_ACCOUNTS;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
-	
-	public static MouseAdapter click_checking_credit_accounts()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.CHECKING_CREDIT_ACCOUNTS;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
-	
-	public static MouseAdapter click_debt_management()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.DEBT_MANAGEMENT;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
-	
-	public static MouseAdapter click_generate_reports()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.GENERATE_REPORTS;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
-	
-	public static MouseAdapter click_savings_investment_accounts()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.SAVINGS_INVESTMENT_ACCOUNTS;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
-	
-	public static MouseAdapter click_transactions()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.TRANSACTIONS;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
-	
-	public static MouseAdapter click_view_accounts()
-	{ MouseAdapter output_click_event = new MouseAdapter()
-		{ @Override
-			public void mouseClicked(MouseEvent e)
-			{ disassemble_current_state();
-			  current_state = State.VIEW_ACCOUNTS;
-			  build_current_state();
-			}
-		};
-		return output_click_event;
-	}
 
-  public static void main(String[] args) 
-  { current_state = State.HOMEPAGE;
-    generate_window();
-    build_current_state();
-  } // end of main()
+	public static void main(String[] args)
+	{ current_state = State.HOMEPAGE;
+		generate_window();
+		build_current_state();
+	} // end of main()
   
   public static void build_current_state()
   { switch (current_state)
@@ -371,6 +271,102 @@ public class Main
 	    }	
     } 
   }
+
+	public static MouseAdapter click_back_to_homepage()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+	  { @Override
+			public void mouseClicked(MouseEvent e)
+			{ disassemble_current_state();
+				current_state = State.HOMEPAGE;
+				build_current_state();
+			}
+	  };
+		return output_click_event;
+	}
+
+	public static MouseAdapter click_back_to_view_accounts()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+	  { @Override
+			public void mouseClicked(MouseEvent e)
+			{ disassemble_current_state();
+				current_state = State.VIEW_ACCOUNTS;
+				build_current_state();
+			}
+	  };
+		return output_click_event;
+	}
+
+	public static MouseAdapter click_checking_credit_accounts()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+		{ @Override
+			public void mouseClicked(MouseEvent e)
+			{ disassemble_current_state();
+				current_state = State.CHECKING_CREDIT_ACCOUNTS;
+				build_current_state();
+			}
+		};
+		return output_click_event;
+	}
+
+	public static MouseAdapter click_debt_management()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+		{ @Override
+			public void mouseClicked(MouseEvent e)
+			{ disassemble_current_state();
+				current_state = State.DEBT_MANAGEMENT;
+				build_current_state();
+			}
+		};
+		return output_click_event;
+	}
+
+	public static MouseAdapter click_generate_reports()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+	  { @Override
+	    public void mouseClicked(MouseEvent e)
+	    { disassemble_current_state();
+		    current_state = State.GENERATE_REPORTS;
+		    build_current_state();
+	    }
+	  };
+		return output_click_event;
+	}
+
+	public static MouseAdapter click_savings_investment_accounts()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+		{ @Override
+			public void mouseClicked(MouseEvent e)
+			{ disassemble_current_state();
+				current_state = State.SAVINGS_INVESTMENT_ACCOUNTS;
+				build_current_state();
+			}
+		};
+		return output_click_event;
+	}
+
+	public static MouseAdapter click_transactions()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+		{ @Override
+			public void mouseClicked(MouseEvent e)
+			{ disassemble_current_state();
+				current_state = State.TRANSACTIONS;
+				build_current_state();
+			}
+		};
+		return output_click_event;
+	}
+
+	public static MouseAdapter click_view_accounts()
+	{ MouseAdapter output_click_event = new MouseAdapter()
+	  { @Override
+	    public void mouseClicked(MouseEvent e)
+	    { disassemble_current_state();
+		    current_state = State.VIEW_ACCOUNTS;
+	    	build_current_state();
+      }
+	  };
+		return output_click_event;
+	}
   
   public static void disassemble_current_state()
   { switch (current_state)
@@ -460,26 +456,32 @@ public class Main
 	    	break;	
 	    }
 	    case EXITING:
-	    {	return;
-	    }	
+			default:
+	    {	break;
+	    }
     } 
   }
 
-  public static JLabel build_label(String s, Label type, MouseAdapter listener)
+  public static JLabel build_label
+		(String s, Label type, MouseAdapter listener)
   { JLabel output_label = new JLabel(s);
     switch (type)
     { case LABEL:
-    	  output_label.setFont(labelFont);
-    	  break;
+		  { output_label.setFont(labelFont);
+			  break;
+		  }
       case TITLE:
-      	output_label.setFont(titleFont);
-    	  break;
+			{ output_label.setFont(titleFont);
+				break;
+			}
       case BACKLINK:
-      	output_label.setFont(backLinkFont);
-    	  break;
+			{ output_label.setFont(backLinkFont);
+				break;
+			}
       case SPACER:
-      	output_label.setPreferredSize(new Dimension(1,50));
-      	break;
+			{ output_label.setPreferredSize(new Dimension(1, 50));
+				break;
+			}
     }
     output_label.addMouseListener(listener);
     return output_label;

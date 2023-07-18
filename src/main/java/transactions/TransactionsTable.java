@@ -1,11 +1,9 @@
 package transactions;
 
 import javax.swing.table.DefaultTableModel;
-
 import com.sun.jdi.DoubleType;
 import database.DatabaseConnection;
 import main.Main;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -18,12 +16,10 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.sql.*;
-
 import javax.swing.*;
 
 public class TransactionsTable extends Main
-{
-  public static final String columns[] =
+{ public static final String columns[] =
     {"Date (MM.DD.YYYY)", "Description", "Amount", "Type", "Account Name"};
   public static final String types[] =
     {"", "Unavoidable Expense", "Luxury Expense", "Deposit",
@@ -37,29 +33,34 @@ public class TransactionsTable extends Main
   private JButton removeButton;
   private JButton saveButton;
   private JButton loadButton;
-  private static final String URL = "jdbc:mysql://localhost:3306/transactions_database";
-  private static final String USER = "root";
-  private static final String PASSWORD = "root";
+  private static final String URL =
+    "jdbc:mysql://localhost:3306/transactions_database";
+  private static final String USER = System.getenv("DB_USERNAME");
+  private static final String PASSWORD = System.getenv("DB_PASSWORD");
   private static final String SELECT_QUERY = "SELECT * FROM transactions_table";
-  private static final String INSERT_QUERY = "INSERT INTO transactions_table (Date, Description, Amount, Type, Account_Name) VALUES (?, ?, ?, ?, ?)";
+  private static final String INSERT_QUERY =
+    "INSERT INTO transactions_table (Date, Description, Amount, Type, Account_Name) "
+      + "VALUES (?, ?, ?, ?, ?)";
   private static final String TRUNCATE_QUERY = "TRUNCATE TABLE transactions_table";
+
+  // CONSTRUCTOR
   public TransactionsTable()
   { addButton = new JButton("+");
     removeButton = new JButton("-");
     saveButton = new JButton("Save");
     loadButton = new JButton("Load");
-    
     table.getTableHeader().setReorderingAllowed(false);
     table.setPreferredScrollableViewportSize(new Dimension(750, 525));
     table.setAutoCreateRowSorter(true);
-    
+
     if (typeComboBox.getItemCount() < 4)
     { for (String s : types)
       { typeComboBox.addItem(s);
       }
-      table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(typeComboBox));
+      table.getColumnModel().getColumn(3).setCellEditor
+        (new DefaultCellEditor(typeComboBox));
     }
-    
+
     addButton.addActionListener(new ActionListener()
     { @Override
       public void actionPerformed(ActionEvent e)
@@ -102,7 +103,9 @@ public class TransactionsTable extends Main
     frame.add(saveButton, gbc);
   }
   
-  public void add_row(String date, String description, String amount, String type, String classification)
+  public void add_row
+    (String date, String description, String amount, String type,
+     String classification)
   { model.addRow(new Object[]{date, description, amount, type, classification});
   }
   

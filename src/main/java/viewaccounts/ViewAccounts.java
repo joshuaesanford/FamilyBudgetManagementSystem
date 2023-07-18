@@ -1,11 +1,9 @@
 package viewaccounts;
 
 import javax.swing.table.DefaultTableModel;
-
 import com.sun.jdi.DoubleType;
 import database.DatabaseConnection;
 import main.Main;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -17,13 +15,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 import java.sql.*;
-
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 
 public class ViewAccounts extends Main
-{
-  public static final String columns[] =
+{ public static final String columns[] =
     {"Account Name", "Type"};
   public static final String types[] =
     {"", "Checking", "Credit", "Savings",
@@ -35,16 +31,19 @@ public class ViewAccounts extends Main
   public static GridBagConstraints gbc = new GridBagConstraints();
   private JButton saveButton;
   private JButton loadButton;
-  private static final String URL = "jdbc:mysql://localhost:3306/transactions_database";
-  private static final String USER = "root";
-  private static final String PASSWORD = "root";
+  private static final String URL =
+    "jdbc:mysql://localhost:3306/transactions_database";
+  private static final String USER = System.getenv("DB_USERNAME");
+  private static final String PASSWORD = System.getenv("DB_USERNAME");
   private static final String SELECT_QUERY = "SELECT * FROM view_accounts_table";
-  private static final String INSERT_QUERY = "INSERT INTO view_accounts_table (Account_Name, Type) VALUES (?, ?)";
+  private static final String INSERT_QUERY =
+    "INSERT INTO view_accounts_table (Account_Name, Type) VALUES (?, ?)";
   private static final String TRUNCATE_QUERY = "TRUNCATE TABLE view_accounts_table";
+
+  // CONSTRUCTOR
   public ViewAccounts()
   { saveButton = new JButton("Save");
     loadButton = new JButton("Load");
-    
     table.getTableHeader().setReorderingAllowed(false);
     table.setPreferredScrollableViewportSize(new Dimension(750, 300));
     table.setAutoCreateRowSorter(true);
@@ -57,31 +56,26 @@ public class ViewAccounts extends Main
     };
     
     table.getColumnModel().getColumn(0).setCellEditor(nonEditableCellEditor);
-    
-    
+
     if (typeComboBox.getItemCount() < 4)
-    {
-      for (String s : types)
-      {
-        typeComboBox.addItem(s);
+    { for (String s : types)
+      { typeComboBox.addItem(s);
       }
-      table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(typeComboBox));
+      table.getColumnModel().getColumn(1).setCellEditor
+        (new DefaultCellEditor(typeComboBox));
     }
+
     saveButton.addActionListener(new ActionListener()
-    {
-      @Override
+    { @Override
       public void actionPerformed(ActionEvent e)
-      {
-        save_table();
+      { save_table();
       }
     });
     
     loadButton.addActionListener(new ActionListener()
-    {
-      @Override
+    { @Override
       public void actionPerformed(ActionEvent e)
-      {
-        load_table();
+      { load_table();
       }
     });
     
@@ -102,9 +96,11 @@ public class ViewAccounts extends Main
   { List<String> output_list = new ArrayList<>();
     try (Connection conn = getConnection();
          Statement st = conn.createStatement())
-    { // select all account names from transactions table that are not in view accounts table.
+    { // select all account names from transactions table that are not in view
+      // accounts table.
       String query = "SELECT t.Account_Name FROM transactions_table t " +
-      "WHERE t.Account_Name NOT IN (Select v.Account_name FROM view_accounts_table v)";
+        "WHERE t.Account_Name " +
+        "NOT IN (Select v.Account_name FROM view_accounts_table v)";
       ResultSet rs = st.executeQuery(query);
       while (rs.next())
       { output_list.add(rs.getString(1));
@@ -113,16 +109,16 @@ public class ViewAccounts extends Main
     catch (SQLException e)
     { throw new RuntimeException(e);
     }
-    // get rid of duplicates by mapping to a set then back to a list. sets do not contain
-    // duplicates by definition.
+    // get rid of duplicates by mapping to a set then back to a list. sets do not
+    // contain duplicates by definition.
     Set<String> set = new HashSet<>(output_list);
     output_list = new ArrayList<>(set);
     return output_list;
   }
   
-  // Queries the database to return a list containing the account names contained in our
-  // view accounts table that are NOT contained in transactions_table. These will need to
-  // be removed.
+  // Queries the database to return a list containing the account names contained
+  // in our view accounts table that are NOT contained in transactions_table.
+  // These will need to be removed.
   public static List<String> get_names_to_remove()
   { List<String> output_list = new ArrayList<>();
     try (Connection conn = getConnection();
@@ -139,8 +135,8 @@ public class ViewAccounts extends Main
     catch (SQLException e)
     { throw new RuntimeException(e);
     }
-    // get rid of duplicates by mapping to a set then back to a list. sets do not contain
-    // duplicates by definition.
+    // get rid of duplicates by mapping to a set then back to a list. sets do not
+    // contain duplicates by definition.
     Set<String> set = new HashSet<>(output_list);
     output_list = new ArrayList<>(set);
     return output_list;
@@ -157,12 +153,13 @@ public class ViewAccounts extends Main
       while (rs.next())
       { acc_name = rs.getString("Account_Name");
         type = rs.getString("Type");
+        // don't add a row if the account name is contained in the remove list.
         if (!get_names_to_remove().contains(acc_name))
         { model.addRow(new Object[]{acc_name, type});
         }
       }
       List<String> new_names = get_new_acc_names();
-      for (int i = 0; i < new_names.stream().count(); ++i)
+      for (int i = 0; i < new_names.size(); ++i)
       { model.addRow(new Object[]{new_names.get(i), ""});
       }
     }
