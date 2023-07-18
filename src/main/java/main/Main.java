@@ -9,7 +9,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import homepage.transactions.TransactionsTable;
+import checkingcreditaccounts.CheckingCreditAccounts;
+import debtmanagment.DebtManagement;
+import reports.Report;
+import savingsinvestmentaccounts.SavingsInvestmentAccounts;
+import transactions.TransactionsTable;
+import viewaccounts.ViewAccounts;
 
 public class Main 
 { static public JFrame frame;
@@ -19,12 +24,17 @@ public class Main
   static public GridBagConstraints gbc;
   static public TransactionsTable transactions_table;
   
-  static final public Font labelFont = new Font("Arial", Font.BOLD, 30);
-  static final public Font titleFont = new Font("Arial", Font.ITALIC, 40);
-  static final public Font backLinkFont = new Font("Arial", Font.BOLD, 26);
-  
-  public static enum State
-  { // Indendation represents path.
+  static final public Font labelFont = new Font("Courier New", Font.BOLD, 30);
+  static final public Font titleFont = new Font("Courier New", Font.ITALIC, 40);
+  static final public Font backLinkFont = new Font("Courier New", Font.BOLD, 24);
+	private static ViewAccounts view_accounts_table;
+	private static DebtManagement debt_management_table;
+	private static CheckingCreditAccounts checking_credit_accounts_table;
+	private static SavingsInvestmentAccounts savings_investment_accounts_table;
+	private static Report report;
+	
+	public static enum State
+  { // Indentation represents path.
 	  	HOMEPAGE,
 			    VIEW_ACCOUNTS,
 				  		DEBT_MANAGEMENT,
@@ -49,8 +59,7 @@ public class Main
 	private static JLabel label_title;
 	private static JLabel label_back_to_view_accounts;
 	private static JLabel label_back_to_homepage;
-	private static JLabel spacer_label;
-	private static JLabel label_spacer;
+	protected static JLabel label_spacer;
 	
 	public static MouseAdapter click_back_to_homepage()
 	{ MouseAdapter output_click_event = new MouseAdapter()
@@ -162,7 +171,7 @@ public class Main
 	    	String s = "<HTML>Family Budget Management System</HTML>";
 	  	  label_title = build_label(s, Label.TITLE, null);
 	  	  // Generate spacer label
-	  	  spacer_label = build_label("", Label.SPACER, null); 
+	  	  label_spacer = build_label("", Label.SPACER, null);
 	  	  // Generate View Accounts, Transactions, and Generate Reports labels
 	  	  s = "<HTML>View Accounts</HTML>";
 	      label_view_accounts = build_label(s, Label.LABEL, click_view_accounts());
@@ -175,7 +184,7 @@ public class Main
 	      gbc.gridy = 0;
 	      frame.add(label_title, gbc);
 	  		gbc.gridy = 1;
-	  		frame.add(spacer_label, gbc);
+	  		frame.add(label_spacer, gbc);
 	      gbc.gridy = 2;
 	      frame.add(label_view_accounts, gbc);
 	      gbc.gridy = 3;
@@ -189,18 +198,14 @@ public class Main
 	    case VIEW_ACCOUNTS:
 	    { // Set window title
 	    	frame.setTitle("FAMILY BUDGET MANAGEMENT SYSTEM => VIEW ACCOUNTS");
-    	  // Generate title Label
+				view_accounts_table = new ViewAccounts();
     	  String s = "<HTML>View Accounts</HTML>";
   	    label_title = build_label(s, Label.TITLE, null);
-	  	  // Generate spacer label
-	  	  spacer_label = build_label("", Label.SPACER, null); 
-	  	  // Generate `View Accounts` label
+	  	  label_spacer = build_label("", Label.SPACER, null);
 	  	  s = "<HTML>Debt Management</HTML>";
 	      label_debt_management = build_label(s, Label.LABEL, click_debt_management());
-	      // Generate `Transactions` label
 	      s = "<HTML>Checking/Credit Accounts</HTML>";
 	      label_checking_credit_accounts = build_label(s, Label.LABEL, click_checking_credit_accounts());
-	      // Generate `Generate Reports` label
 	      s = "<HTML>Savings & Investment Accounts</HTML>";
 	      label_savings_investment_accounts = build_label(s, Label.LABEL, click_savings_investment_accounts());
 	      // Generate `Back to Home` label
@@ -211,16 +216,16 @@ public class Main
 	      gbc.gridy = 0;
 	      frame.add(label_title, gbc);
 	  		gbc.gridy = 1;
-	  		frame.add(spacer_label, gbc);
-	      gbc.gridy = 2;
-	      frame.add(label_debt_management, gbc);
-	      gbc.gridy = 3;
-	      frame.add(label_checking_credit_accounts, gbc);
+	  		frame.add(label_spacer, gbc);
 	      gbc.gridy = 4;
-	      frame.add(label_savings_investment_accounts, gbc);
+	      frame.add(label_debt_management, gbc);
 	      gbc.gridy = 5;
-	      frame.add(spacer_label, gbc);
+	      frame.add(label_checking_credit_accounts, gbc);
 	      gbc.gridy = 6;
+	      frame.add(label_savings_investment_accounts, gbc);
+	      gbc.gridy = 7;
+	      frame.add(label_spacer, gbc);
+	      gbc.gridy = 8;
 	      frame.add(label_back_to_homepage, gbc);
 	      // MUST revalidate and repaint.
 	      frame.revalidate();
@@ -230,62 +235,92 @@ public class Main
 	    case DEBT_MANAGEMENT:
 	    { // Set window title
 	    	frame.setTitle("FAMILY BUDGET MANAGEMENT SYSTEM => VIEW ACCOUNTS => DEBT MANAGEMENT");
-	    	String s = "<HTML>Back to View Accounts</HTML>";
-	    	label_back_to_view_accounts = build_label(
-	    			s, Label.BACKLINK, click_back_to_view_accounts());
-	    	s = "<HTML>Back to Homepage</HTML>";
-	      label_back_to_homepage = build_label(
-	      		s, Label.BACKLINK, click_back_to_homepage());
-	      // Traverse grid bag coordinates and add labels.
-	      gbc.gridx = 0;
-	      gbc.gridy = 0;
-	      frame.add(label_back_to_view_accounts, gbc);
-	      gbc.gridy = 1;
-	      frame.add(label_back_to_homepage, gbc);
-	    	// MUST revalidate and repaint.
-	      frame.revalidate();
-	      frame.repaint();
-	    	break;	
+				debt_management_table = new DebtManagement();
+				String s = "<HTML>Debt Management</HTML>";
+				label_title = build_label(s, Label.TITLE, null);
+				label_spacer = build_label("", Label.SPACER, null);
+				s = "<HTML>Back to View Accounts</HTML>";
+				label_back_to_view_accounts = build_label(
+					s, Label.BACKLINK, click_back_to_view_accounts());
+				// Generate `Back to Home` label
+				s = "<HTML>Back to Homepage</HTML>";
+				label_back_to_homepage = build_label(s, Label.BACKLINK, click_back_to_homepage());
+				// Traverse grid bag coordinates and add labels.
+				gbc.gridx = 0;
+				gbc.gridy = 0;
+				frame.add(label_title, gbc);
+				gbc.gridy = 1;
+				frame.add(label_spacer, gbc);
+				gbc.gridy = 3;
+				frame.add(label_spacer, gbc);
+				gbc.gridy = 4;
+				frame.add(label_back_to_view_accounts, gbc);
+				gbc.gridy = 5;
+				frame.add(label_back_to_homepage, gbc);
+				// MUST revalidate and repaint.
+				frame.revalidate();
+				frame.repaint();
+				break;
 	    }
 	    case CHECKING_CREDIT_ACCOUNTS:
 	    { // Set window title
-	    	frame.setTitle("FAMILY BUDGET MANAGEMENT SYSTEM => VIEW ACCOUNTS => CHECKING/CREDIT ACCOUNTS");
-	    	String s = "<HTML>Back to View Accounts</HTML>";
-	    	label_back_to_view_accounts = build_label(
-	    			s, Label.BACKLINK, click_back_to_view_accounts());
-	    	s = "<HTML>Back to Homepage</HTML>";
-	      label_back_to_homepage = build_label(
-	      		s, Label.BACKLINK, click_back_to_homepage());
-	      // Traverse grid bag coordinates and add labels.
-	      gbc.gridx = 0;
-	      gbc.gridy = 0;
-	      frame.add(label_back_to_view_accounts, gbc);
-	      gbc.gridy = 1;
-	      frame.add(label_back_to_homepage, gbc);
-	    	// MUST revalidate and repaint.
-	      frame.revalidate();
-	      frame.repaint();
-	    	break;	
+				frame.setTitle("FAMILY BUDGET MANAGEMENT SYSTEM => VIEW ACCOUNTS => CHECKING/CREDIT ACCOUNTS");
+				checking_credit_accounts_table = new CheckingCreditAccounts();
+				String s = "<HTML>Checking/Credit Accounts</HTML>";
+				label_title = build_label(s, Label.TITLE, null);
+				label_spacer = build_label("", Label.SPACER, null);
+				s = "<HTML>Back to View Accounts</HTML>";
+				label_back_to_view_accounts = build_label(
+					s, Label.BACKLINK, click_back_to_view_accounts());
+				// Generate `Back to Home` label
+				s = "<HTML>Back to Homepage</HTML>";
+				label_back_to_homepage = build_label(s, Label.BACKLINK, click_back_to_homepage());
+				// Traverse grid bag coordinates and add labels.
+				gbc.gridx = 0;
+				gbc.gridy = 0;
+				frame.add(label_title, gbc);
+				gbc.gridy = 1;
+				frame.add(label_spacer, gbc);
+				gbc.gridy = 3;
+				frame.add(label_spacer, gbc);
+				gbc.gridy = 4;
+				frame.add(label_back_to_view_accounts, gbc);
+				gbc.gridy = 5;
+				frame.add(label_back_to_homepage, gbc);
+				// MUST revalidate and repaint.
+				frame.revalidate();
+				frame.repaint();
+				break;
 	    }
 	    case SAVINGS_INVESTMENT_ACCOUNTS:
 	    { // Set window title
 	    	frame.setTitle("FAMILY BUDGET MANAGEMENT SYSTEM => VIEW ACCOUNTS => SAVINGS & INVESTMENT ACCOUNTS");
-	    	String s = "<HTML>Back to View Accounts</HTML>";
-	    	label_back_to_view_accounts = build_label(
-	    			s, Label.BACKLINK, click_back_to_view_accounts());
-	    	s = "<HTML>Back to Homepage</HTML>";
-	      label_back_to_homepage = build_label(
-	      		s, Label.BACKLINK, click_back_to_homepage());
-	      // Traverse grid bag coordinates and add labels.
-	      gbc.gridx = 0;
-	      gbc.gridy = 0;
-	      frame.add(label_back_to_view_accounts, gbc);
-	      gbc.gridy = 1;
-	      frame.add(label_back_to_homepage, gbc);
-	    	// MUST revalidate and repaint.
-	      frame.revalidate();
-	      frame.repaint();
-	    	break;	
+				savings_investment_accounts_table = new SavingsInvestmentAccounts();
+				String s = "<HTML>Savings & Investment Accounts</HTML>";
+				label_title = build_label(s, Label.TITLE, null);
+				label_spacer = build_label("", Label.SPACER, null);
+				s = "<HTML>Back to View Accounts</HTML>";
+				label_back_to_view_accounts = build_label(
+					s, Label.BACKLINK, click_back_to_view_accounts());
+				// Generate `Back to Home` label
+				s = "<HTML>Back to Homepage</HTML>";
+				label_back_to_homepage = build_label(s, Label.BACKLINK, click_back_to_homepage());
+				// Traverse grid bag coordinates and add labels.
+				gbc.gridx = 0;
+				gbc.gridy = 0;
+				frame.add(label_title, gbc);
+				gbc.gridy = 1;
+				frame.add(label_spacer, gbc);
+				gbc.gridy = 3;
+				frame.add(label_spacer, gbc);
+				gbc.gridy = 4;
+				frame.add(label_back_to_view_accounts, gbc);
+				gbc.gridy = 5;
+				frame.add(label_back_to_homepage, gbc);
+				// MUST revalidate and repaint.
+				frame.revalidate();
+				frame.repaint();
+				break;
 	    }
 	    case TRANSACTIONS:
 	    { // Set window title
@@ -310,11 +345,21 @@ public class Main
 	    case GENERATE_REPORTS:
 	    { // Set window title
 	    	frame.setTitle("FAMILY BUDGET MANAGEMENT SYSTEM => GENERATE REPORTS");
+ 			  report = new Report();
 	    	String s = "<HTML>Back to Homepage</HTML>";
 	      label_back_to_homepage = build_label(s, Label.BACKLINK, click_back_to_homepage());
+				s = "<HTML>Reports</HTML>";
+				label_title = build_label(s, Label.TITLE, null);
+				label_spacer = build_label("", Label.SPACER, null);
 	      // Traverse grid bag coordinates and add labels.
 	      gbc.gridx = 0;
 	      gbc.gridy = 0;
+				frame.add(label_title, gbc);
+				gbc.gridy = 1;
+				frame.add(label_spacer,gbc);
+				gbc.gridy = 5;
+				frame.add(label_spacer, gbc);
+				gbc.gridy = 6;
 	      frame.add(label_back_to_homepage, gbc);
 	    	// MUST revalidate and repaint.
 	      frame.revalidate();
@@ -346,44 +391,71 @@ public class Main
 	      frame.remove(label_checking_credit_accounts);
 	      frame.remove(label_savings_investment_accounts);
 	      frame.remove(label_back_to_homepage);
+				frame.remove(label_spacer);
+				frame.remove(label_spacer);
+				view_accounts_table.disassemble();
+				view_accounts_table = null;
 	      label_title = null;
 	      label_debt_management = null;
 	      label_checking_credit_accounts = null;
 	      label_savings_investment_accounts = null;
 	      label_back_to_homepage = null;
+				label_spacer = null;
 	    	break;
 	    }
 	    case DEBT_MANAGEMENT:
 	    { frame.remove(label_back_to_homepage);
 	      frame.remove(label_back_to_view_accounts);
+				frame.remove(label_title);
+				frame.remove(label_spacer);
+				frame.remove(label_spacer);
+				debt_management_table.disassemble();
+				debt_management_table = null;
 	      label_back_to_homepage = null;
 	      label_back_to_view_accounts = null;
+				label_spacer = null;
 	    	break;	
 	    }
 	    case CHECKING_CREDIT_ACCOUNTS:
 	    { frame.remove(label_back_to_homepage);
-        frame.remove(label_back_to_view_accounts);
-        label_back_to_homepage = null;
-        label_back_to_view_accounts = null;
-      	break;	
-	    }
+				frame.remove(label_back_to_view_accounts);
+				frame.remove(label_title);
+				frame.remove(label_spacer);
+				frame.remove(label_spacer);
+				checking_credit_accounts_table.disassemble();
+				checking_credit_accounts_table = null;
+				label_back_to_homepage = null;
+				label_back_to_view_accounts = null;
+				label_spacer = null;
+				break;
+			}
 	    case SAVINGS_INVESTMENT_ACCOUNTS:
 	    { frame.remove(label_back_to_homepage);
-        frame.remove(label_back_to_view_accounts);
-        label_back_to_homepage = null;
-        label_back_to_view_accounts = null;
-      	break;		
+				frame.remove(label_back_to_view_accounts);
+				frame.remove(label_title);
+				frame.remove(label_spacer);
+				frame.remove(label_spacer);
+				savings_investment_accounts_table.disassemble();
+				savings_investment_accounts_table = null;
+				label_back_to_homepage = null;
+				label_back_to_view_accounts = null;
+				label_spacer = null;
+				break;
 	    }
 	    case TRANSACTIONS:
 	    { frame.remove(label_back_to_homepage);
 	      frame.remove(label_spacer);
 	      transactions_table.disassemble();
 	      transactions_table = null;
-	      label_back_to_homepage = null;	      
+	      label_back_to_homepage = null;
 	    	break;	
 	    }
 	    case GENERATE_REPORTS:
 	    { frame.remove(label_back_to_homepage);
+				frame.remove(label_title);
+				report.disassemble();
+				report = null;
+				label_title = null;
         label_back_to_homepage = null;
 	    	break;	
 	    }
